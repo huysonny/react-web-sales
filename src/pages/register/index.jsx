@@ -1,10 +1,31 @@
-import { Button, Checkbox, Divider, Form, Input } from 'antd';
+import { Button, Checkbox, Divider, Form, Input, message, notification } from 'antd';
 import './register.scss'
+import { useState } from 'react';
+import { callRegister } from '../../services/api';
+import { Link, useNavigate } from 'react-router-dom';
 
-const onFinish = (values) => {
-    console.log('Success:', values);
-};
+
 const Register = () => {
+    const navigate = useNavigate();
+    const [isSubmit, setSubmit] = useState(false);
+    const onFinish = async (values) => {
+        const { fullName, email, password, phone } = values;
+        setSubmit(true);
+        let res = await callRegister(fullName, email, password, phone);
+        setSubmit(false);
+        console.log("check res ", res)
+        if (res?.data?._id) {
+            message.success("Đăng Ký Thành Công");
+            navigate("/login");
+        } else {
+            notification.error({
+                message: "Có lỗi xảy ra",
+                description:
+                    res.message && Array.isArray(res.message) ? res.message[0] : res.message,
+                duration: 5
+            })
+        }
+    };
     return (
         <div className="register-page">
             <main className="main">
@@ -59,10 +80,16 @@ const Register = () => {
                             <Form.Item
                             // wrapperCol={{ offset: 6, span: 16 }}
                             >
-                                <Button type="primary" htmlType="submit" loading={false}>
+                                <Button type="primary" htmlType="submit" loading={isSubmit}>
                                     Đăng ký
                                 </Button>
                             </Form.Item>
+                            <Divider>Or</Divider>
+                            <p className="text text-normal">Đã có tài khoản ?
+                                <span>
+                                    <Link to='/login' > Đăng Nhập </Link>
+                                </span>
+                            </p>
                         </Form>
                     </section>
                 </div>
