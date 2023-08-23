@@ -3,14 +3,19 @@ import './login.scss'
 import { useState } from 'react';
 import { callLogin, callRegister } from '../../services/api';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { doLoginAction } from '../../redux/account/accountSlice';
 const LoginPage = () => {
     const [isSubmit, setSubmit] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const onFinish = async (values) => {
         const { username, password } = values;
         setSubmit(true);
         let res = await callLogin(username, password);
         if (res?.data) {
+            localStorage.setItem("access_token", res.data.access_token);
+            dispatch(doLoginAction(res.data.user))
             message.success("Đăng Nhập Thành Công")
             navigate("/");
         }
