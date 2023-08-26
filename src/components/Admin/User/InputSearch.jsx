@@ -16,7 +16,7 @@ const InputSearch = (props) => {
         if (phone) {
             query += `&phone=/${phone}/i`
         }
-        props.handleSearch(query);
+        props.setFilter(query);
     }
     const handleClear = () => {
         setEmail("");

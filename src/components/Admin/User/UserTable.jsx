@@ -2,6 +2,8 @@ import { Table } from 'antd';
 import InputSearch from './InputSearch';
 import { useEffect, useState } from 'react';
 import { callFetchListUser } from '../../../services/api';
+import { ReloadOutlined } from '@ant-design/icons';
+import './UserTable.scss'
 const UserTable = () => {
     const [listUser, setListUser] = useState([]);
     const [current, setCurrent] = useState(1);
@@ -9,6 +11,7 @@ const UserTable = () => {
     const [total, setTotal] = useState(0);
     const [isLoading, setLoading] = useState(false);
     const [filter, setFilter] = useState('');
+    const [sorter, setSorter] = useState('');
     const columns = [
         {
             title: 'Id',
@@ -42,13 +45,10 @@ const UserTable = () => {
     ];
     useEffect(() => {
         fetchUser();
-    }, [current, pageSize])
-    const fetchUser = async (searchFilter) => {
+    }, [current, pageSize, filter, sorter])
+    const fetchUser = async () => {
         setLoading(true);
-        let query = `current=${current}&pageSize=${pageSize}+`;
-        if (searchFilter) {
-            query += `&${searchFilter}`;
-        }
+        let query = `current=${current}&pageSize=${pageSize}&${filter}&${sorter}`;
         let res = await callFetchListUser(query);
         if (res && res.data) {
             setListUser(res.data.result);
@@ -63,19 +63,32 @@ const UserTable = () => {
             setPageSize(pagination.pageSize);
             setCurrent(1);
         }
-        console.log('params', pagination);
+        if (sorter && sorter.field) {
+            const q = sorter.order === `ascend` ? `sort=${sorter.field}` : `sort=-${sorter.field}`;
+            setSorter(q);
+        }
     };
-    const handleSearch = (query) => {
-        fetchUser(query);
+    const handleReload = () => {
+        setFilter("");
+        setSorter("");
+        fetchUser();
     }
+
     return (
         <>
             <div className="crud-container">
                 <div className="input_filter">
-                    <InputSearch handleSearch={handleSearch} />
+                    <InputSearch setFilter={setFilter} />
+                </div>
+                <div className='icon'>
+                    <div onClick={() => handleReload()} >
+                        <ReloadOutlined />
+                    </div>
                 </div>
                 <div className="table">
-                    <Table columns={columns} rowKey="_id" dataSource={listUser} onChange={onChange} pagination={{ current: current, pageSize: pageSize, showSizeChanger: true, total: total }} isLoading={isLoading} />
+                    <Table columns={columns} rowKey="_id" dataSource={listUser} onChange={onChange}
+                        pagination={{ current: current, pageSize: pageSize, showSizeChanger: true, total: total }}
+                        isLoading={isLoading} />
                 </div>
             </div>
         </>
