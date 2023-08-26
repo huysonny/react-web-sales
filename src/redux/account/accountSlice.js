@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isAuthenticated: false,
+  isLoading: true,
   user: {
     email: "",
     phone: "",
@@ -23,7 +24,8 @@ export const accountSlice = createSlice({
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
       state.isAuthenticated = true;
-      state.user = action.payload.user;
+      state.isLoading = false;
+      state.user = action.payload;
     },
     doGetAccountAction: (state, action) => {
       // Redux Toolkit allows us to write "mutating" logic in reducers. It
@@ -31,7 +33,20 @@ export const accountSlice = createSlice({
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
       state.isAuthenticated = true;
+      state.isLoading = false;
       state.user = action.payload.user;
+    },
+    doLogOutAction: (state, action) => {
+      localStorage.removeItem("access_token");
+      (state.isAuthenticated = false),
+        (state.user = {
+          email: "",
+          phone: "",
+          fullName: "",
+          role: "",
+          avatar: "",
+          id: "",
+        });
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -39,6 +54,7 @@ export const accountSlice = createSlice({
   extraReducers: (builder) => {},
 });
 
-export const { doLoginAction, doGetAccountAction } = accountSlice.actions;
+export const { doLoginAction, doGetAccountAction, doLogOutAction } =
+  accountSlice.actions;
 
 export default accountSlice.reducer;

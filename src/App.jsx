@@ -18,6 +18,8 @@ import Loading from './components/Loading';
 import NotFound from './components/NotFound';
 import AdminPage from './pages/admin';
 import ProtectedRoute from './components/ProtectedRoute';
+import LayoutAdmin from './components/Admin/LayoutAdmin';
+import UserTable from './components/Admin/User/UserTable';
 
 const Layout = () => {
   return (
@@ -28,25 +30,12 @@ const Layout = () => {
     </div>
   )
 }
-const LayoutAdmin = () => {
-  const isAdminRoute = window.location.pathname.startsWith('/admin');
-  const user = useSelector(state => state.account.user);
-  const userRole = user.role;
-  return (
-    <div className='layout-app'>
-      {isAdminRoute && userRole === 'ADMIN' && <Header />}
-      {/* <Header /> */}
-      <Outlet />
-      {isAdminRoute && userRole === 'ADMIN' && <Footer />}
-      {/* <Footer /> */}
-    </div>
-  )
-}
 export default function App() {
+  const isLoading = useSelector(state => state.account.isLoading);
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(state => state.account.isAuthenticated);
   const getAccount = async () => {
-    if (window.location.pathname === '/login' || window.location.pathname === "/register" || window.location.pathname === "/") {
+    if (window.location.pathname === '/login' || window.location.pathname === "/register") {
       return;
     }
     const res = await callFetchAccount();
@@ -82,7 +71,7 @@ export default function App() {
         { index: true, element: <ProtectedRoute><AdminPage /></ProtectedRoute> },
         {
           path: "user",
-          element: <ContactPage />,
+          element: <UserTable />,
         },
         {
           path: "book",
@@ -102,7 +91,7 @@ export default function App() {
 
   return (
     <>
-      {isAuthenticated === true || window.location.pathname === '/login' || window.location.pathname === "/register" || window.location.pathname === "/" ? <RouterProvider router={router} /> : <Loading />}
+      {isLoading === false || window.location.pathname === '/login' || window.location.pathname === "/register" || window.location.pathname === "/" ? <RouterProvider router={router} /> : <Loading />}
     </>
   )
 }

@@ -1,0 +1,52 @@
+.Input-container {
+    display: flex;
+    flex-direction: column;
+    /* Đảm bảo .input và .button nằm dọc */
+    width: 100%;
+    padding: 16px;
+    box-sizing: border-box;
+
+    .input {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        /* Căn nội dung đầu mỗi ô lên đầu */
+        width: 100%;
+        padding: 16px;
+        /* Tạo khoảng cách từ lề màn hình */
+        box-sizing: border-box;
+
+        .input-name,
+        .input-email,
+        .input-phone {
+            flex: 1;
+            /* Chia 3 cột ngang bằng nhau */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            /* Căn chữ ở bên trái */
+            padding: 16px;
+            box-sizing: border-box;
+
+            .input-label {
+                margin-bottom: 8px;
+                /* Khoảng cách giữa label và input */
+            }
+
+            .ant-input {
+                width: 100%;
+                /* Input chiếm hết khoảng trống của div con */
+            }
+        }
+    }
+
+    .button {
+        display: flex;
+        justify-content: flex-end;
+        /* Căn nút sang bên phải */
+        margin-top: 16px;
+        gap: 20px;
+        /* Tạo khoảng cách giữa ô input và nút */
+    }
+
+}
