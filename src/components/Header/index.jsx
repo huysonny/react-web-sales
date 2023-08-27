@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { VscSearchFuzzy } from 'react-icons/vsc';
 import { FaReact } from 'react-icons/fa'
-import { Drawer, Divider, Badge, message } from 'antd';
+import { Drawer, Divider, Badge, message, Avatar } from 'antd';
 import { FiShoppingCart } from 'react-icons/fi';
 import { useDispatch, useSelector } from "react-redux";
 import { Dropdown, Space } from 'antd';
 import './header.scss'
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { DownOutlined } from '@ant-design/icons';
 import { callLogout } from "../../services/api";
 import { doLogOutAction } from "../../redux/account/accountSlice";
@@ -16,7 +16,7 @@ const Header = () => {
     const user = useSelector(state => state.account.user);
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const itemsDropsdown = [
+    let itemsDropsdown = [
         {
             label: <label style={{ cursor: 'pointer' }}>Quản lý tài khoản</label>,
             key: 'account',
@@ -28,6 +28,9 @@ const Header = () => {
             key: 'logout',
         }
     ]
+    if (user?.role === 'ADMIN') {
+        itemsDropsdown.unshift({ label: <Link to="/admin">Trang quản trị</Link>, key: 'admin' })
+    }
     const handleLogout = async () => {
         let res = await callLogout();
         if (res && res.data) {
@@ -36,6 +39,7 @@ const Header = () => {
             dispatch(doLogOutAction());
         }
     }
+    const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
     return (
         <>
             <div className="header-container">
@@ -70,7 +74,8 @@ const Header = () => {
                                     <Dropdown menu={{ items: itemsDropsdown }} trigger={['click']}>
                                         <a onClick={(e) => e.preventDefault()}>
                                             <Space>
-                                                Welcome {user?.fullName}
+                                                <Avatar src={urlAvatar} />
+                                                {user?.fullName}
                                                 <DownOutlined />
                                             </Space>
                                         </a>

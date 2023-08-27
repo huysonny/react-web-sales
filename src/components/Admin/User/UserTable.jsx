@@ -1,9 +1,10 @@
-import { Table } from 'antd';
+import { Button, Table } from 'antd';
 import InputSearch from './InputSearch';
 import { useEffect, useState } from 'react';
 import { callFetchListUser } from '../../../services/api';
-import { ReloadOutlined } from '@ant-design/icons';
+import { ExportOutlined, ImportOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import './UserTable.scss'
+import UserViewDetail from './UserViewDetail';
 const UserTable = () => {
     const [listUser, setListUser] = useState([]);
     const [current, setCurrent] = useState(1);
@@ -12,10 +13,20 @@ const UserTable = () => {
     const [isLoading, setLoading] = useState(false);
     const [filter, setFilter] = useState('');
     const [sorter, setSorter] = useState('');
+    const [openViewDetail, setOpenViewDetail] = useState(false);
+    const [dataViewDetail, setDataViewDetail] = useState();
     const columns = [
         {
             title: 'Id',
             dataIndex: '_id',
+            render: (text, record, index) => {
+                return (
+                    <a href='#' onClick={() => {
+                        setOpenViewDetail(true);
+                        setDataViewDetail(record);
+                    }}>{record._id}</a>
+                )
+            }
         },
         {
             title: 'Tên hiển thị',
@@ -73,6 +84,27 @@ const UserTable = () => {
         setSorter("");
         fetchUser();
     }
+    const renderHeader = () => {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span>Table List Users</span>
+                <span style={{ display: 'flex', gap: 15 }}>
+                    <Button icon={<ExportOutlined />} type='primary'>
+                        Export
+                    </Button>
+                    <Button icon={<ImportOutlined />} type='primary'>
+                        Import
+                    </Button>
+                    <Button icon={<PlusOutlined />} type='primary'>
+                        Thêm mới
+                    </Button>
+                    <Button type='ghost' onClick={() => handleReload()}>
+                        <ReloadOutlined />
+                    </Button>
+                </span>
+            </div>
+        )
+    }
 
     return (
         <>
@@ -80,17 +112,20 @@ const UserTable = () => {
                 <div className="input_filter">
                     <InputSearch setFilter={setFilter} />
                 </div>
-                <div className='icon'>
-                    <div onClick={() => handleReload()} >
-                        <ReloadOutlined />
-                    </div>
-                </div>
                 <div className="table">
                     <Table columns={columns} rowKey="_id" dataSource={listUser} onChange={onChange}
-                        pagination={{ current: current, pageSize: pageSize, showSizeChanger: true, total: total }}
+                        title={renderHeader}
+                        pagination={{
+                            current: current,
+                            pageSize: pageSize,
+                            showSizeChanger: true,
+                            total: total,
+                            showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                        }}
                         isLoading={isLoading} />
                 </div>
             </div>
+            <UserViewDetail dataViewDetail={dataViewDetail} setDataViewDetail={setDataViewDetail} openViewDetail={openViewDetail} setOpenViewDetail={setOpenViewDetail} />
         </>
     )
 }

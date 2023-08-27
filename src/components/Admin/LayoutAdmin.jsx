@@ -1,6 +1,6 @@
 
 import { AppstoreAddOutlined, UserOutlined, TeamOutlined, ExceptionOutlined, DollarCircleOutlined, MenuUnfoldOutlined, DownOutlined, HeartTwoTone } from '@ant-design/icons';
-import { Layout, Menu, Dropdown, Space, message } from 'antd';
+import { Layout, Menu, Dropdown, Space, message, Avatar } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -69,6 +69,7 @@ const LayoutAdmin = () => {
         }
     }
     const user = useSelector(state => state.account.user);
+    const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
     return (
         <>
             <Layout style={{ minHeight: '100vh' }} className='layout-admin'>
@@ -91,7 +92,7 @@ const LayoutAdmin = () => {
                         <Dropdown menu={{ items: itemsDropsdown }} trigger={['click']}>
                             <a onClick={(e) => e.preventDefault()}>
                                 <Space>
-                                    Welcome {user?.fullName}
+                                    <Avatar src={urlAvatar} /> {user?.fullName}
                                     <DownOutlined />
                                 </Space>
                             </a>
