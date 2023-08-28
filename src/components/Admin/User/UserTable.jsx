@@ -1,16 +1,18 @@
-import { Button, Table } from 'antd';
+import { Button, Popconfirm, Table, message, notification } from 'antd';
 import InputSearch from './InputSearch';
 import { useEffect, useState } from 'react';
-import { callFetchListUser } from '../../../services/api';
-import { ExportOutlined, ImportOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import { callFetchListUser, deleteUser } from '../../../services/api';
+import { DeleteTwoTone, EditTwoTone, ExportOutlined, ImportOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import './UserTable.scss'
 import UserViewDetail from './UserViewDetail';
 import UserAddDetail from './UserAddDetail';
 import UserImport from './UserImport';
+import * as XLSX from 'xlsx';
+import UserUpdateDetail from './UserUpdateDetail';
 const UserTable = () => {
     const [listUser, setListUser] = useState([]);
     const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(2);
+    const [pageSize, setPageSize] = useState(5);
     const [total, setTotal] = useState(0);
     const [isLoading, setLoading] = useState(false);
     const [filter, setFilter] = useState('');
@@ -19,6 +21,21 @@ const UserTable = () => {
     const [dataViewDetail, setDataViewDetail] = useState();
     const [openAddDetail, setOpenAddDetail] = useState(false);
     const [openUserImport, setOpenUserImport] = useState(false);
+    const [dataUpdate, setDataUpdate] = useState([]);
+    const [openUpdateDetail, SetOpenUpdateDetail] = useState(false);
+    const handleDelteUser = async (id) => {
+        let res = await deleteUser(id);
+        if (res && res.data) {
+            message.success("Xóa user thành công")
+            fetchUser();
+        } else {
+            notification.error({
+                message: 'Có lỗi xảy ra',
+                description: res.message
+            })
+        }
+
+    }
     const columns = [
         {
             title: 'Id',
@@ -52,7 +69,33 @@ const UserTable = () => {
             render: (text, record, index) => {
                 return (
                     <>
-                        <button>Delte</button>
+                        <Popconfirm
+                            placement='leftTop'
+                            title={"xác nhận xóa user"}
+                            description={"Bạn có chắc chắn muốn xóa user này ? "}
+                            onConfirm={() => handleDelteUser(record._id)}
+                            okText="Xác nhận"
+                            cancelText="Hủy"
+                        >
+                            <span style={{
+                                cursor: "pointer", margin: "0 20px"
+                            }}>
+                                <DeleteTwoTone twoToneColor="#ff4df" />
+                            </span>
+                        </Popconfirm>
+                        <span style={{
+                            cursor: "pointer", margin: "0 20px"
+                        }} onClick={() => {
+                            setDataUpdate(record);
+                            SetOpenUpdateDetail(true);
+                        }}>
+                            <EditTwoTone
+                                twoToneColor="#f57800"
+                                style={{ cursor: "pointer" }
+                                }
+
+                            />
+                        </span>
                     </>
                 )
             }
@@ -83,6 +126,14 @@ const UserTable = () => {
             setSorter(q);
         }
     };
+    const handleExportData = () => {
+        if (listUser.length > 0) {
+            const worksheet = XLSX.utils.json_to_sheet(listUser);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+            XLSX.writeFile(workbook, "ExportUser.csv");
+        }
+    }
     const handleReload = () => {
         setFilter("");
         setSorter("");
@@ -92,7 +143,7 @@ const UserTable = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span>Table List Users</span>
                 <span style={{ display: 'flex', gap: 15 }}>
-                    <Button icon={<ExportOutlined />} type='primary'>
+                    <Button icon={<ExportOutlined />} type='primary' onClick={() => handleExportData()}>
                         Export
                     </Button>
                     <Button icon={<ImportOutlined />} type='primary' onClick={() => setOpenUserImport(true)}>
@@ -140,6 +191,13 @@ const UserTable = () => {
             <UserImport
                 openUserImport={openUserImport}
                 setOpenUserImport={setOpenUserImport}
+                fetchUser={fetchUser}
+            />
+            <UserUpdateDetail
+                dataUpdate={dataUpdate}
+                setDataUpdate={setDataUpdate}
+                openUpdateDetail={openUpdateDetail}
+                SetOpenUpdateDetail={SetOpenUpdateDetail}
                 fetchUser={fetchUser}
             />
 

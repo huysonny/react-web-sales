@@ -2,7 +2,6 @@ import { Badge, Button, Descriptions, Drawer } from 'antd';
 import moment from 'moment/moment';
 const UserViewDetail = (props) => {
     const { dataViewDetail, setDataViewDetail, openViewDetail, setOpenViewDetail } = props;
-    console.log(dataViewDetail)
     const onClose = () => {
         setOpenViewDetail(false);
     };
