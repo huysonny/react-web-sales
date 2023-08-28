@@ -5,6 +5,8 @@ import { callFetchListUser } from '../../../services/api';
 import { ExportOutlined, ImportOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import './UserTable.scss'
 import UserViewDetail from './UserViewDetail';
+import UserAddDetail from './UserAddDetail';
+import UserImport from './UserImport';
 const UserTable = () => {
     const [listUser, setListUser] = useState([]);
     const [current, setCurrent] = useState(1);
@@ -15,6 +17,8 @@ const UserTable = () => {
     const [sorter, setSorter] = useState('');
     const [openViewDetail, setOpenViewDetail] = useState(false);
     const [dataViewDetail, setDataViewDetail] = useState();
+    const [openAddDetail, setOpenAddDetail] = useState(false);
+    const [openUserImport, setOpenUserImport] = useState(false);
     const columns = [
         {
             title: 'Id',
@@ -82,7 +86,6 @@ const UserTable = () => {
     const handleReload = () => {
         setFilter("");
         setSorter("");
-        fetchUser();
     }
     const renderHeader = () => {
         return (
@@ -92,10 +95,10 @@ const UserTable = () => {
                     <Button icon={<ExportOutlined />} type='primary'>
                         Export
                     </Button>
-                    <Button icon={<ImportOutlined />} type='primary'>
+                    <Button icon={<ImportOutlined />} type='primary' onClick={() => setOpenUserImport(true)}>
                         Import
                     </Button>
-                    <Button icon={<PlusOutlined />} type='primary'>
+                    <Button icon={<PlusOutlined />} type='primary' onClick={() => setOpenAddDetail(true)}>
                         Thêm mới
                     </Button>
                     <Button type='ghost' onClick={() => handleReload()}>
@@ -125,7 +128,21 @@ const UserTable = () => {
                         isLoading={isLoading} />
                 </div>
             </div>
-            <UserViewDetail dataViewDetail={dataViewDetail} setDataViewDetail={setDataViewDetail} openViewDetail={openViewDetail} setOpenViewDetail={setOpenViewDetail} />
+            <UserViewDetail
+                dataViewDetail={dataViewDetail}
+                setDataViewDetail={setDataViewDetail}
+                openViewDetail={openViewDetail}
+                setOpenViewDetail={setOpenViewDetail} />
+            <UserAddDetail
+                openAddDetail={openAddDetail}
+                setOpenAddDetail={setOpenAddDetail}
+                fetchUser={fetchUser} />
+            <UserImport
+                openUserImport={openUserImport}
+                setOpenUserImport={setOpenUserImport}
+                fetchUser={fetchUser}
+            />
+
         </>
     )
 }
