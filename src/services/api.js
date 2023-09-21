@@ -96,3 +96,6 @@ export const callUpdateBook = (
 export const callDeleteBook = (_id) => {
   return axios.delete(`/api/v1/book/${_id}`);
 };
+export const callFetchBookById = (_id) => {
+  return axios.get(`/api/v1/book/${_id}`);
+};

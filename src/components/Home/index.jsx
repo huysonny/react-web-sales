@@ -289,7 +289,7 @@ const Home = () => {
                                             <div className="column" key={`book-${index}`} onClick={() => handleRedirectBook(item)}>
                                                 <div className='wrapper'>
                                                     <div className='thumbnail'>
-                                                        <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item.thumbnail}`} alt="thumbnail book" />
+                                                        <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item.thumbnail}`} alt="thumbnail book" style={{ width: "200px", height: "200px" }} />
                                                     </div>
                                                     <div className='text' title={item.mainText}>{item.mainText}</div>
                                                     <div className='price'>

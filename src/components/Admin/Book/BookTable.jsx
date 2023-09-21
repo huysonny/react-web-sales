@@ -72,33 +72,41 @@ const BookTable = (props) => {
             render: (text, record, index) => {
                 return (
                     <>
-                        <Popconfirm
-                            placement='leftTop'
-                            title={"xác nhận xóa user"}
-                            description={"Bạn có chắc chắn muốn xóa user này ? "}
-                            onConfirm={() => handleDelteUser(record._id)}
-                            okText="Xác nhận"
-                            cancelText="Hủy"
-                        >
-                            <span style={{
-                                cursor: "pointer", margin: "0 20px"
-                            }}>
-                                <DeleteTwoTone twoToneColor="#ff4df" />
-                            </span>
-                        </Popconfirm>
-                        <span style={{
-                            cursor: "pointer", margin: "0 20px"
-                        }} onClick={() => {
-                            setDataUpdate(record);
-                            setOpenModalUpdateBook(true);
-                        }}>
-                            <EditTwoTone
-                                twoToneColor="#f57800"
-                                style={{ cursor: "pointer" }
-                                }
+                        <div style={{ display: "flex" }}>
+                            <div>
+                                <Popconfirm
+                                    placement='leftTop'
+                                    title={"xác nhận xóa user"}
+                                    description={"Bạn có chắc chắn muốn xóa user này ? "}
+                                    onConfirm={() => handleDelteUser(record._id)}
+                                    okText="Xác nhận"
+                                    cancelText="Hủy"
+                                >
+                                    <span style={{
+                                        cursor: "pointer", margin: "0 20px"
+                                    }}>
+                                        <DeleteTwoTone twoToneColor="#ff4df" />
+                                    </span>
+                                </Popconfirm>
+                            </div>
 
-                            />
-                        </span>
+                            <div>
+                                <span style={{
+                                    cursor: "pointer", margin: "0 20px"
+                                }} onClick={() => {
+                                    setDataUpdate(record);
+                                    setOpenModalUpdateBook(true);
+                                }}>
+                                    <EditTwoTone
+                                        twoToneColor="#f57800"
+                                        style={{ cursor: "pointer" }
+                                        }
+
+                                    />
+                                </span>
+                            </div>
+                        </div>
+
                     </>
                 )
             }

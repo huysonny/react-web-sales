@@ -6,71 +6,19 @@ import { useRef, useState } from 'react';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { BsCartPlus } from 'react-icons/bs';
 import ModalGallery from './ModalGallery';
+import BookLoader from './BookLoader';
+import { useDispatch, useSelector } from 'react-redux';
+import { doAddBookAction } from '../../redux/order/orderSlice';
 
 const ViewDetail = (props) => {
-
+    const { dataBook } = props;
     const [isOpenModalGallery, setIsOpenModalGallery] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
-
+    const [currentQuantity, setCurrentQuantity] = useState(1);
     const refGallery = useRef(null);
-
-    const images = [
-        {
-            original: 'https://picsum.photos/id/1018/1000/600/',
-            thumbnail: 'https://picsum.photos/id/1018/250/150/',
-            originalClass: "original-image",
-            thumbnailClass: "thumbnail-image"
-        },
-        {
-            original: 'https://picsum.photos/id/1015/1000/600/',
-            thumbnail: 'https://picsum.photos/id/1015/250/150/',
-            originalClass: "original-image",
-            thumbnailClass: "thumbnail-image"
-        },
-        {
-            original: 'https://picsum.photos/id/1019/1000/600/',
-            thumbnail: 'https://picsum.photos/id/1019/250/150/',
-            originalClass: "original-image",
-            thumbnailClass: "thumbnail-image"
-        },
-        {
-            original: 'https://picsum.photos/id/1018/1000/600/',
-            thumbnail: 'https://picsum.photos/id/1018/250/150/',
-            originalClass: "original-image",
-            thumbnailClass: "thumbnail-image"
-        },
-        {
-            original: 'https://picsum.photos/id/1015/1000/600/',
-            thumbnail: 'https://picsum.photos/id/1015/250/150/',
-            originalClass: "original-image",
-            thumbnailClass: "thumbnail-image"
-        },
-        {
-            original: 'https://picsum.photos/id/1019/1000/600/',
-            thumbnail: 'https://picsum.photos/id/1019/250/150/',
-            originalClass: "original-image",
-            thumbnailClass: "thumbnail-image"
-        },
-        {
-            original: 'https://picsum.photos/id/1018/1000/600/',
-            thumbnail: 'https://picsum.photos/id/1018/250/150/',
-            originalClass: "original-image",
-            thumbnailClass: "thumbnail-image"
-        },
-        {
-            original: 'https://picsum.photos/id/1015/1000/600/',
-            thumbnail: 'https://picsum.photos/id/1015/250/150/',
-            originalClass: "original-image",
-            thumbnailClass: "thumbnail-image"
-        },
-        {
-            original: 'https://picsum.photos/id/1019/1000/600/',
-            thumbnail: 'https://picsum.photos/id/1019/250/150/',
-            originalClass: "original-image",
-            thumbnailClass: "thumbnail-image"
-        },
-    ];
-
+    const dispatch = useDispatch();
+    const images = dataBook?.items ?? []
+    console.log("check images", images);
     const handleOnClickImage = () => {
         //get current index onClick
         // alert(refGallery?.current?.getCurrentIndex());
@@ -78,16 +26,35 @@ const ViewDetail = (props) => {
         setCurrentIndex(refGallery?.current?.getCurrentIndex() ?? 0)
         // refGallery?.current?.fullScreen()
     }
-
+    console.log("checkk dataBook", dataBook);
     const onChange = (value) => {
         console.log('changed', value);
     };
-
+    const handeChangButton = (type) => {
+        if (type === "MINUS") {
+            if (currentQuantity - 1 < 0) return;
+            setCurrentQuantity(currentQuantity - 1);
+        }
+        if (type === "PLUS") {
+            if (currentQuantity + 1 === +dataBook.quantity) return;
+            setCurrentQuantity(currentQuantity + 1);
+        }
+    }
+    const handleChangeInput = (values) => {
+        if (!isNaN(values)) {
+            if (+values > 0 && +values < +dataBook.quantity) {
+                setCurrentQuantity(+values);
+            }
+        }
+    }
+    const handleAddToCart = (quantity, book) => {
+        dispatch(doAddBookAction({ quantity, detail: book, _id: book._id }));
+    }
     return (
         <div style={{ background: '#efefef', padding: "20px 0" }}>
             <div className='view-detail-book' style={{ maxWidth: 1440, margin: '0 auto', minHeight: "calc(100vh - 150px)" }}>
                 <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>
-                    <Row gutter={[20, 20]}>
+                    {dataBook && dataBook._id ? <Row gutter={[20, 20]}>
                         <Col md={10} sm={0} xs={0}>
                             <ImageGallery
                                 ref={refGallery}
@@ -113,17 +80,17 @@ const ViewDetail = (props) => {
                                 />
                             </Col>
                             <Col span={24}>
-                                <div className='author'>Tác giả: <a href='#'>Jo Hemmings</a> </div>
-                                <div className='title'>How Psychology Works - Hiểu Hết Về Tâm Lý Học</div>
+                                <div className='author'>Tác giả: <a href='#'>{dataBook.author}</a> </div>
+                                <div className='title'>{dataBook.mainText}</div>
                                 <div className='rating'>
                                     <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 12 }} />
                                     <span className='sold'>
                                         <Divider type="vertical" />
-                                        Đã bán 6969</span>
+                                        Đã bán {dataBook.sold}</span>
                                 </div>
                                 <div className='price'>
                                     <span className='currency'>
-                                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(696966666)}
+                                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(dataBook.price)}
                                     </span>
                                 </div>
                                 <div className='delivery'>
@@ -135,13 +102,13 @@ const ViewDetail = (props) => {
                                 <div className='quantity'>
                                     <span className='left-side'>Số lượng</span>
                                     <span className='right-side'>
-                                        <button ><MinusOutlined /></button>
-                                        <input defaultValue={1} />
-                                        <button><PlusOutlined /></button>
+                                        <button onClick={() => handeChangButton("MINUS")}><MinusOutlined /></button>
+                                        <input value={currentQuantity} onChange={(event) => handleChangeInput(event.target.value)} />
+                                        <button onClick={() => handeChangButton("PLUS")}><PlusOutlined /></button>
                                     </span>
                                 </div>
                                 <div className='buy'>
-                                    <button className='cart'>
+                                    <button className='cart' onClick={() => handleAddToCart(currentQuantity, dataBook)}>
                                         <BsCartPlus className='icon-cart' />
                                         <span>Thêm vào giỏ hàng</span>
                                     </button>
@@ -149,7 +116,8 @@ const ViewDetail = (props) => {
                                 </div>
                             </Col>
                         </Col>
-                    </Row>
+                    </Row> : <BookLoader />}
+
                 </div>
             </div>
             <ModalGallery
@@ -157,7 +125,7 @@ const ViewDetail = (props) => {
                 setIsOpen={setIsOpenModalGallery}
                 currentIndex={currentIndex}
                 items={images}
-                title={"hardcode"}
+                title={dataBook.mainText}
             />
         </div>
     )

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { VscSearchFuzzy } from 'react-icons/vsc';
 import { FaReact } from 'react-icons/fa'
-import { Drawer, Divider, Badge, message, Avatar } from 'antd';
+import { Drawer, Divider, Badge, message, Avatar, Popover, Button } from 'antd';
 import { FiShoppingCart } from 'react-icons/fi';
 import { useDispatch, useSelector } from "react-redux";
 import { Dropdown, Space } from 'antd';
@@ -16,6 +16,7 @@ const Header = () => {
     const user = useSelector(state => state.account.user);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const carts = useSelector(state => state.order.carts);
     let itemsDropsdown = [
         {
             label: <label style={{ cursor: 'pointer' }}>Quản lý tài khoản</label>,
@@ -40,6 +41,33 @@ const Header = () => {
         }
     }
     const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
+    const order = () => {
+        if (isAuthenticated === false) {
+            navigate("/login");
+            message.error("Vui lòng đăng nhập để xem được giỏ hàng ");
+        }
+        else {
+            navigate("order");
+        }
+    }
+    const contentPopover = (
+        <div className="pop-cart-body">
+            <div className="pop-cart-content">
+                {carts?.map((book, index) => {
+                    return (
+                        <div className="book" key={`book-${index}`}>
+                            <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${book?.detail?.thumbnail}`} />
+                            <div>{book.detail.mainText}</div>
+                            <div style={{ color: "red" }}> {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book?.detail?.price ?? 0)}</div>
+                        </div>
+                    )
+                })}
+            </div>
+            <div className="pop-cart-footer">
+                <Button type="primary" danger onClick={() => order()}>Xem Giỏ Hàng</Button>
+            </div>
+        </div>
+    );
     return (
         <>
             <div className="header-container">
@@ -49,7 +77,7 @@ const Header = () => {
                             setOpenDrawer(true)
                         }}>☰</div>
                         <div className="page-header__logo">
-                            <span className="logo">
+                            <span className="logo" onClick={() => navigate('/')}>
                                 <FaReact className='rotate icon-react' /> Thanh Huy
                                 <VscSearchFuzzy className='icon-search' />
                             </span>
@@ -59,12 +87,21 @@ const Header = () => {
                     <nav className="page-header__bottom">
                         <ul id="navigation" className="navigation">
                             <li className="navigation__item">
-                                <Badge
-                                    count={5}
-                                    size={"small"}
+                                <Popover
+                                    className="popover-carts"
+                                    placement="topRight"
+                                    rootClassName="popover-carts"
+                                    title={"Sản phẩm mới thêm"}
+                                    content={contentPopover}
+                                    arrow={true}
                                 >
-                                    <FiShoppingCart className='icon-cart' />
-                                </Badge>
+                                    <Badge
+                                        count={carts?.length ?? 0}
+                                        size={"small"}
+                                    >
+                                        <FiShoppingCart className='icon-cart' />
+                                    </Badge>
+                                </Popover>
                             </li>
                             <li className="navigation__item mobile"><Divider type='vertical' /></li>
                             <li className="navigation__item mobile">
