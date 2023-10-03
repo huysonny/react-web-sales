@@ -10,6 +10,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { DownOutlined } from '@ant-design/icons';
 import { callLogout } from "../../services/api";
 import { doLogOutAction } from "../../redux/account/accountSlice";
+import ManageAcount from "../Account/ManageAcount";
+
 const Header = () => {
     const [OpenDrawer, setOpenDrawer] = useState(false);
     const isAuthenticated = useSelector(state => state.account.isAuthenticated);
@@ -17,10 +19,18 @@ const Header = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const carts = useSelector(state => state.order.carts);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [tempAvatar, setTempAvatar] = useState();
     let itemsDropsdown = [
         {
-            label: <label style={{ cursor: 'pointer' }}>Quản lý tài khoản</label>,
+            label: <label style={{ cursor: 'pointer' }} onClick={() => setIsModalOpen(true)}>Quản lý tài khoản</label>,
             key: 'account',
+        },
+        {
+            label: <label
+                style={{ cursor: 'pointer' }} onClick={() => navigate("history")}
+            >Lịch Sử Mua Hàng</label>,
+            key: 'logout',
         },
         {
             label: <label
@@ -40,7 +50,7 @@ const Header = () => {
             dispatch(doLogOutAction());
         }
     }
-    const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
+    const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${tempAvatar || user?.avatar}`;
     const order = () => {
         if (isAuthenticated === false) {
             navigate("/login");
@@ -130,6 +140,7 @@ const Header = () => {
                 <p>Đăng xuất</p>
                 <Divider />
             </Drawer>
+            <ManageAcount isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} tempAvatar={tempAvatar} setTempAvatar={setTempAvatar} />
         </>
     )
 }

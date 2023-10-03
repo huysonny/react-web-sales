@@ -24,6 +24,7 @@ import BookTable from './components/Admin/Book/BookTable';
 import './styles/global.scss';
 import ViewOder from './pages/order/ViewOder';
 import OrderPage from './pages/order';
+import OrderHistory from './pages/order/orderHistory';
 const Layout = () => {
   return (
     <div className='layout-app'>
@@ -67,6 +68,10 @@ export default function App() {
         {
           path: "order",
           element: <OrderPage />
+        },
+        {
+          path: "history",
+          element: <OrderHistory />
         }
       ],
     },

@@ -4,8 +4,11 @@ import "./order.scss";
 import ViewOder from "./ViewOder";
 import Payment from "./Payment";
 import { SmileOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+
 const OrderPage = (props) => {
     const [currentStep, setCurrentStep] = useState(0);
+    const navigate = useNavigate();
     return (
         <div style={{ background: "#efefef", padding: "20px 0" }}>
             <div className="order-container" style={{ maxWidth: 1440, margin: '0 auto', height: "100vh" }}>
@@ -42,7 +45,7 @@ const OrderPage = (props) => {
                     <Result
                         icon={<SmileOutlined />}
                         title="Đơn hàng đã được đặt thành công !"
-                        extra={<Button type="primary">Xem lịch sử</Button>}
+                        extra={<Button type="primary" onClick={() => navigate("/history")}>Xem lịch sử</Button>}
                     />
                 }
             </div>

@@ -27,6 +27,7 @@ const LoginPage = () => {
                 duration: 5
             })
         }
+        setSubmit(false);
     }
     return (
         <div className="register-page">
@@ -63,7 +64,6 @@ const LoginPage = () => {
 
 
                             <Form.Item
-                            // wrapperCol={{ offset: 6, span: 16 }}
                             >
                                 <Button type="primary" htmlType="submit" loading={isSubmit}>
                                     Đăng ký
