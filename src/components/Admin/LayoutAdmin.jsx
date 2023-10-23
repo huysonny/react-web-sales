@@ -2,7 +2,7 @@
 import { AppstoreAddOutlined, UserOutlined, TeamOutlined, ExceptionOutlined, DollarCircleOutlined, MenuUnfoldOutlined, DownOutlined, HeartTwoTone } from '@ant-design/icons';
 import { Layout, Menu, Dropdown, Space, message, Avatar } from 'antd';
 import Sider from 'antd/es/layout/Sider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 const { Content, Footer, sider } = Layout;
 import { Outlet, useNavigate, Link } from "react-router-dom";
@@ -43,6 +43,7 @@ const items = [
     },
 
 ]
+
 const LayoutAdmin = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [activeMenu, setActiveMenu] = useState('dashboard');
@@ -68,6 +69,17 @@ const LayoutAdmin = () => {
             dispatch(doLogOutAction());
         }
     }
+    useEffect(() => {
+        if (window.location.pathname.includes('/book')) {
+            setActiveMenu('book');
+        }
+        else if (window.location.pathname.includes('/order')) {
+            setActiveMenu('order')
+        }
+        else if (window.location.pathname.includes('/user')) {
+            setActiveMenu('user')
+        }
+    }, [])
     const user = useSelector(state => state.account.user);
     const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
     return (
@@ -76,7 +88,8 @@ const LayoutAdmin = () => {
                 <Sider theme='light' collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
                     <div style={{ height: 32, margin: 16, textAlign: 'center' }}><Link to='/'>Admin</Link></div>
                     <Menu
-                        defaultSelectedKeys={[activeMenu]}
+                        // defaultSelectedKeys={[activeMenu]}
+                        selectedKeys={[activeMenu]}
                         mode='inline'
                         items={items}
                         onClick={(e) => setActiveMenu(e.key)}

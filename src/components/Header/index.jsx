@@ -12,7 +12,7 @@ import { callLogout } from "../../services/api";
 import { doLogOutAction } from "../../redux/account/accountSlice";
 import ManageAcount from "../Account/ManageAcount";
 
-const Header = () => {
+const Header = (props) => {
     const [OpenDrawer, setOpenDrawer] = useState(false);
     const isAuthenticated = useSelector(state => state.account.isAuthenticated);
     const user = useSelector(state => state.account.user);
@@ -91,7 +91,7 @@ const Header = () => {
                                 <FaReact className='rotate icon-react' /> Thanh Huy
                                 <VscSearchFuzzy className='icon-search' />
                             </span>
-                            <input className="input-search" type={'text'} placeholder="Bạn tìm gì hôm nay" />
+                            <input className="input-search" value={props.searchTearm} type={'text'} placeholder="Bạn tìm gì hôm nay" onChange={(e) => props.setSearchTerm(e.target.value)} />
                         </div>
                     </div>
                     <nav className="page-header__bottom">

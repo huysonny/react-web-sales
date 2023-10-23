@@ -133,3 +133,9 @@ export const callUpdatePassword = (email, oldpass, newpass) => {
     newpass,
   });
 };
+export const callListOrder = (query) => {
+  return axios.get(`/api/v1/order?${query}`);
+};
+export const callFetchDashBoard = () => {
+  return axios.get("/api/v1/database/dashboard");
+};

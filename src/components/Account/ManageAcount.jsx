@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { Button, Modal, Tabs } from 'antd';
-import UserInfo from './UserInfo';
-import ChangePassWord from './ChangePassword';
+import React, { useState } from "react";
+import { Button, Modal, Tabs } from "antd";
+import UserInfo from "./UserInfo";
+import ChangePassWord from "./ChangePassword";
+import { useSelector } from "react-redux";
 
 const ManageAcount = (props) => {
   const { isModalOpen, setIsModalOpen, tempAvatar, setTempAvatar } = props;
+  const user = useSelector((state) => state.account.user);
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -12,20 +14,24 @@ const ManageAcount = (props) => {
     setIsModalOpen(false);
   };
   const handleCancel = () => {
+    console.log(user.avatar);
     setIsModalOpen(false);
+    setTempAvatar(user?.avatar);
   };
   const items = [
     {
-      key: 'info',
-      label: 'Cập nhật thông tin',
-      children: <UserInfo tempAvatar={tempAvatar} setTempAvatar={setTempAvatar} />,
+      key: "info",
+      label: "Cập nhật thông tin",
+      children: (
+        <UserInfo tempAvatar={tempAvatar} setTempAvatar={setTempAvatar} />
+      ),
     },
     {
-      key: 'password',
-      label: 'Đổi mật khẩu',
-      children: <ChangePassWord />
-    }
-  ]
+      key: "password",
+      label: "Đổi mật khẩu",
+      children: <ChangePassWord />,
+    },
+  ];
   return (
     <>
       <Modal
@@ -36,13 +42,9 @@ const ManageAcount = (props) => {
         maskClosable={false}
         width={"60vw"}
       >
-        <Tabs
-          defaultActiveKey='info'
-          items={items}
-        />
+        <Tabs defaultActiveKey="info" items={items} />
       </Modal>
-
     </>
-  )
-}
+  );
+};
 export default ManageAcount;

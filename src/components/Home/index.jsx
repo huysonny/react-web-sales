@@ -1,13 +1,13 @@
 import { FilterTwoTone, ReloadOutlined } from '@ant-design/icons';
 import { Row, Col, Form, Checkbox, Divider, InputNumber, Button, Rate, Tabs, Pagination, Spin } from 'antd';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { callFetchCategory, callFetchListBook } from '../../services/api';
 import './home.scss';
 const Home = () => {
 
     const [listCategory, setListCategory] = useState([]);
-
+    const [searchTerm, setSearchTerm] = useOutletContext();
     const [listBook, setListBook] = useState([]);
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(10);
@@ -35,7 +35,8 @@ const Home = () => {
 
     useEffect(() => {
         fetchBook();
-    }, [current, pageSize, filter, sortQuery]);
+        console.log("check searchTearm", searchTerm);
+    }, [current, pageSize, filter, sortQuery, searchTerm]);
 
     const fetchBook = async () => {
         setIsLoading(true)
@@ -45,6 +46,9 @@ const Home = () => {
         }
         if (sortQuery) {
             query += `&${sortQuery}`;
+        }
+        if (searchTerm) {
+            query += `&mainText=/${searchTerm}/i`;
         }
 
         const res = await callFetchListBook(query);
@@ -158,7 +162,7 @@ const Home = () => {
 
         return str;
     }
-
+    console.log("searchTearm", searchTerm);
     const handleRedirectBook = (book) => {
         const slug = convertSlug(book.mainText);
         navigate(`/book/${slug}?id=${book._id}`)
@@ -177,6 +181,7 @@ const Home = () => {
                                 <ReloadOutlined title="Reset" onClick={() => {
                                     form.resetFields();
                                     setFilter('');
+                                    setSearchTerm("");
                                 }}
                                 />
                             </div>

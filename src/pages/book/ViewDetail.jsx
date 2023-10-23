@@ -9,6 +9,7 @@ import ModalGallery from './ModalGallery';
 import BookLoader from './BookLoader';
 import { useDispatch, useSelector } from 'react-redux';
 import { doAddBookAction } from '../../redux/order/orderSlice';
+import { useNavigate } from 'react-router-dom';
 
 const ViewDetail = (props) => {
     const { dataBook } = props;
@@ -18,7 +19,7 @@ const ViewDetail = (props) => {
     const refGallery = useRef(null);
     const dispatch = useDispatch();
     const images = dataBook?.items ?? []
-    console.log("check images", images);
+    const navigate = useNavigate();
     const handleOnClickImage = () => {
         //get current index onClick
         // alert(refGallery?.current?.getCurrentIndex());
@@ -112,7 +113,7 @@ const ViewDetail = (props) => {
                                         <BsCartPlus className='icon-cart' />
                                         <span>Thêm vào giỏ hàng</span>
                                     </button>
-                                    <button className='now'>Mua ngay</button>
+                                    <button className='now' >Mua ngay</button>
                                 </div>
                             </Col>
                         </Col>
